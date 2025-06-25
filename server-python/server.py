@@ -2,8 +2,9 @@ import grpc
 from concurrent import futures
 import time
 import threading
-import proto.chat_pb2 as chat_pb2
-import proto.chat_pb2_grpc as chat_pb2_grpc
+import chat_pb2
+import chat_pb2_grpc
+
 
 # Lista global de streams dos clientes conectados
 connected_clients = []

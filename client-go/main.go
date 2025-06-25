@@ -11,7 +11,7 @@ import (
     "google.golang.org/grpc"
     "google.golang.org/grpc/credentials/insecure"
 
-    pb "grpc_chat_project/proto"
+    pb "GRPCTransmiss-o/proto"
 )
 
 func main() {
@@ -39,8 +39,7 @@ func main() {
                 log.Printf("Stream encerrada: %v", err)
                 return
             }
-            fmt.Printf("[%s]: %s
-", msg.User, msg.Message)
+            fmt.Printf("[%s]: %s\n", msg.User, msg.Message)
         }
     }()
 
