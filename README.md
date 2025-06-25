@@ -52,13 +52,8 @@ cd client-go
 go run main.go
 ```
 
-5. Teste múltiplas abas de clientes para chat multiusuário.
+## Apresentação (Canva):
+(https://www.canva.com/design/DAGrUtWCW3U/zR5V4suyo6qB2QD7h0llyA/view?utm_content=DAGrUtWCW3U&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcb3e4a86e1)
 
-## Observações
-
-- O servidor escuta na porta 50051
-- Comunicação via streams gRPC, ideal para aplicações em tempo real
-
----
-
-Qualquer dúvida, me pergunte!
+## Dontpad para teste colaborativo:
+  [https://dontpad.com/Chat-Real](https://dontpad.com/Chat-Real)
