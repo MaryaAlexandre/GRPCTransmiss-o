@@ -4,6 +4,7 @@ import (
     "bufio"
     "context"
     "fmt"
+    "io"
     "log"
     "os"
     "time"
@@ -15,6 +16,7 @@ import (
 )
 
 func main() {
+    // Conexão gRPC
     conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
     if err != nil {
         log.Fatalf("Falha ao conectar: %v", err)
@@ -22,7 +24,6 @@ func main() {
     defer conn.Close()
 
     client := pb.NewChatServiceClient(conn)
-
     ctx, cancel := context.WithCancel(context.Background())
     defer cancel()
 
@@ -31,32 +32,41 @@ func main() {
         log.Fatalf("Erro ao abrir stream: %v", err)
     }
 
+    reader := bufio.NewReader(os.Stdin)
+    fmt.Print("Digite seu nome: ")
+    user, _ := reader.ReadString('\n')
+    user = user[:len(user)-1] 
+
+    fmt.Println("Digite mensagens (ENTER para enviar). Ctrl+C para sair.")
+
     // Goroutine para receber mensagens
     go func() {
         for {
             msg, err := stream.Recv()
+            if err == io.EOF {
+                return
+            }
             if err != nil {
                 log.Printf("Stream encerrada: %v", err)
                 return
             }
-            fmt.Printf("[%s]: %s\n", msg.User, msg.Message)
+    
+            if msg.User == user {
+                continue
+            }
+           
+            fmt.Printf("\n[%s]: %s\n> ", msg.User, msg.Message)
         }
     }()
 
-    reader := bufio.NewReader(os.Stdin)
-    fmt.Print("Digite seu nome: ")
-    user, _ := reader.ReadString('\n')
-    user = user[:len(user)-1] // remover quebra de linha
-
-    fmt.Println("Digite mensagens (ENTER para enviar). Ctrl+C para sair.")
-
+ 
     for {
         fmt.Print("> ")
         text, err := reader.ReadString('\n')
         if err != nil {
-            log.Fatalf("Erro leitura: %v", err)
+            log.Fatalf("Erro na leitura: %v", err)
         }
-        text = text[:len(text)-1] // remover quebra de linha
+        text = text[:len(text)-1]
         if text == "" {
             continue
         }
@@ -66,7 +76,6 @@ func main() {
             Message:   text,
             Timestamp: time.Now().Unix(),
         }
-
         if err := stream.Send(msg); err != nil {
             log.Fatalf("Erro ao enviar mensagem: %v", err)
         }
